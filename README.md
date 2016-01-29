@@ -15,8 +15,9 @@ If you’re trying to run this locally, you’ll need:
 `schema.sql` will get your database set up and `update.rb` will populate new
 releases.
 
-Pull requests are welcome. Bye!
+[Check it out live][live]; pull requests are welcome. Bye!
 
 [Spotify]: https://www.spotify.com/
 [Spotify developer]: https://developer.spotify.com/my-applications/
 [Dotenv]: https://github.com/bkeepers/dotenv
+[live]: http://dotwave.johnholdun.com
