@@ -1,0 +1,12 @@
+source 'https://rubygems.org'
+
+gem 'activesupport', '~> 4.2', require: 'active_support/all'
+gem 'dotenv', '~> 2.1'
+gem 'haml', '~> 4.0'
+gem 'omniauth', '~> 1.2'
+gem 'pg', '~> 0.18'
+gem 'rack', '~> 1.6'
+gem 'rspotify', '~> 1.16'
+gem 'sequel', '~> 4.30'
+gem 'sinatra', '~> 1.4', require: 'sinatra/base'
+gem 'unicorn', '~> 5.0'

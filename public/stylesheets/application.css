@@ -1,0 +1,150 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font: 18px/20px Roboto;
+  font-weight: 100;
+}
+
+body {
+  margin: 0 auto;
+  background: #000C00;
+  color: #DED;
+}
+
+a {
+  color: #1faf43;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #29ec5a;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.masthead {
+  overflow: hidden;
+  text-align: center;
+  max-width: 100%;
+  background: #1F361F;
+  padding: 2rem 0;
+  margin-bottom: 1rem;
+}
+
+.masthead-inner {
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.branding {
+  font-size: 0.8rem;
+  line-height: 1rem;
+  text-transform: uppercase;
+  color: #CDC;
+  letter-spacing: 2px;
+}
+
+.branding a {
+  color: inherit;
+}
+
+.title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  padding-top: 0.5rem;
+}
+
+.cta,
+.what {
+  margin-top: 2rem;
+}
+
+.cta a,
+.what a {
+  display: block;
+  text-align: center;
+  line-height: 3rem;
+  padding: 0 0.5rem;
+  border: 1px solid currentColor;
+}
+
+.cta a {
+  color: #FFF;
+}
+
+.main {
+  margin: 0 auto;
+  padding: 0 1rem;
+  max-width: 30rem;
+}
+
+.album {
+  max-width: 30rem;
+}
+
+.album-artist,
+.album-name,
+.album-type {
+  line-height: 1.5rem;
+}
+
+.album-artist,
+.album-name {
+  font-size: 1rem;
+  display: inline;
+}
+
+.album-name:before {
+  content: "• ";
+}
+
+.album-link {
+  display: block;
+  color: inherit;
+  padding: 1rem 0;
+}
+
+.album-link:hover,
+.album-link:active {
+  color: inherit;
+}
+
+.album-artist {
+  font-weight: inherit;
+  color: #FFF;
+}
+
+.album-name {
+  font-weight: inherit;
+}
+
+.album-type {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-top: 0.5rem;
+  color: #777;
+}
+
+footer {
+  margin: 0 auto;
+  padding-top: 2rem;
+  max-width: 30rem;
+  font-size: 0.8rem;
+  line-height: 1.5rem;
+  color: #999;
+}
+
+footer p {
+  padding: 2rem 0;
+  border-top: 1px solid currentColor;
+}

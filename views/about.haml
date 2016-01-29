@@ -1,0 +1,35 @@
+- title = capture_haml do
+  What <em>is</em> this though?
+
+- @layout_options = { title: title, show_cta: false, show_what: false }
+
+.ill-tell-you-what
+  %p
+    I’m <a href="http://johnholdun.com">John Holdun</a>, and I miss
+    <a href="http://rdio.com">Rdio</a> a lot. Something I miss a <em>lot</em> a
+    lot about Rdio is how it handled new releases every week: It was just a list
+    of every new album published in the last seven days, sorted by popularity.
+    That was all I ever wanted.
+
+  %p
+    Spotify doesn’t do that. Their “New Releases” section is <em>not</em> every
+    new release; there is also a playlist of new releases, but it’s just a
+    playlist, and that’s not comprehensive either. Sometimes Spotify sends me
+    notifications about new releases, but I can’t tell when or why it decides
+    those are worth delivering.
+
+  %p
+    So here’s this. I call it Dotwave. It’s every new release on Spotify (I
+    think) in the last seven days, sorted by popularity of the artist. I only
+    show the top 100 here but if you sign in, I’ll show you a selection of the
+    <em>entire</em> list that is filtered down to only the artists you follow.
+    You can tap any of these to open them in Spotify, ready to play.
+
+  %p
+    This thing is not exactly what I miss, but it’s pretty close. If you have
+    something to say, I’m
+    <a href="http://twitter.com/johnholdun">@johnholdun</a>. Okay, bye!
+
+  %p.cta
+    %a{ href: '/auth/spotify' }
+      Sign in with&nbsp;Spotify

@@ -1,0 +1,14 @@
+- title = capture_haml do
+  This week’s new albums
+  = "for&nbsp;#{user.id}" if user
+
+- @layout_options = { title: title, show_cta: user.nil?, show_what: true }
+
+- albums.each do |album|
+  %section.album
+    %a.album-link{ href: "spotify:album:#{album.id}", title: 'Open in Spotify' }
+      %h1.album-artist= album.artists.map(&:name).join ', '
+
+      %h2.album-name= album.name
+
+      %p.album-type= album.type

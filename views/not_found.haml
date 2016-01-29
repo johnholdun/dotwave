@@ -1,0 +1,28 @@
+- title = capture_haml do
+  - if context == :user
+    I don’t know this person.
+  - else
+    Sorry, what?
+
+- @layout_options = { title: title, show_cta: (context != :user), show_what: true }
+
+.ill-tell-you-what
+  - if context == :user
+    %p
+      This isn’t a username I recognize. Is it you? Let’s get acquainted!
+
+    %p.cta
+      %a{ href: '/auth/spotify' }
+        Sign in with&nbsp;Spotify
+
+  - else
+    %p
+      This is probably my bad, but I just have no idea where you were trying to
+      go.
+
+    %p
+      If this seems like a goof, would you mind letting me know? I’m
+      = succeed ',' do
+        %a{ href: 'http://twitter.com/johnholdun' }
+          @johnholdun
+      in case you missed that before.
