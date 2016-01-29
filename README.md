@@ -1,5 +1,7 @@
 # Dotwave
 
+[![Code Climate](https://codeclimate.com/github/johnholdun/dotwave/badges/gpa.svg)](https://codeclimate.com/github/johnholdun/dotwave)
+
 ## Find new albums on [Spotify][] from artists you follow
 
 If you’re trying to run this locally, you’ll need:
