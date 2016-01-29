@@ -5,6 +5,8 @@ working_directory dir
 
 timeout 30
 
+preload_app true
+
 listen "#{dir}/tmp/sockets/unicorn.sock", backlog: 64
 
 pid "#{dir}/tmp/pids/unicorn.pid"
