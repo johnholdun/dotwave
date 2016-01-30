@@ -1,115 +1,105 @@
+html {
+  box-sizing: border-box;
+  font: 30px/35px "Work Sans";
+  font-weight: 300;
+}
+
 * {
+  box-sizing: inherit;
+  font: inherit;
   margin: 0;
   padding: 0;
 }
 
-html {
-  font: 18px/20px Roboto;
-  font-weight: 100;
+*::before,
+*::after {
+  box-sizing: inherit;
 }
 
 body {
-  margin: 0 auto;
-  background: #000C00;
-  color: #DED;
+  background: #3e7206;
+  color: #ded;
+  margin: 1rem auto;
+  width: 100%;
 }
 
 a {
-  color: #1faf43;
+  color: #71ce0d;
   text-decoration: none;
+}
+
+em {
+  font-style: italic;
 }
 
 a:hover {
   color: #29ec5a;
 }
 
-p {
-  font-size: 1rem;
-  line-height: 1.5rem;
-  margin-bottom: 1rem;
-}
-
 .masthead {
-  overflow: hidden;
-  text-align: center;
-  max-width: 100%;
-  background: #1F361F;
-  padding: 2rem 0;
-  margin-bottom: 1rem;
+  width: 100%;
 }
 
 .masthead-inner {
-  max-width: 30rem;
   margin: 0 auto;
-  padding: 0 1rem;
+  max-width: 30rem;
+  padding: 0 .5rem;
+  width: 100%;
 }
 
 .branding {
-  font-size: 0.8rem;
-  line-height: 1rem;
-  text-transform: uppercase;
-  color: #CDC;
+  font-size: .8rem;
   letter-spacing: 2px;
-}
-
-.branding a {
-  color: inherit;
+  line-height: .5rem;
+  margin: 0 0 1rem;
+  text-transform: uppercase;
 }
 
 .title {
-  font-size: 1.5rem;
-  line-height: 2rem;
-  padding-top: 0.5rem;
-}
-
-.cta,
-.what {
-  margin-top: 2rem;
-}
-
-.cta a,
-.what a {
-  display: block;
-  text-align: center;
-  line-height: 3rem;
-  padding: 0 0.5rem;
-  border: 1px solid currentColor;
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  margin: 1rem 0;
 }
 
 .cta a {
-  color: #FFF;
+  background: #71ce0d;
+  color: #3e7206;
+  display: block;
+  font-size: .8rem;
+  line-height: 2rem;
+  margin-bottom: 1rem;
+  padding: 0 .5rem;
+  text-align: center;
+}
+
+.what a {
+  background: #ded;
+  color: #3e7206;
+  display: block;
+  font-size: .8rem;
+  line-height: 2rem;
+  margin-bottom: 1rem;
+  padding: 0 .5rem;
+  text-align: center;
 }
 
 .main {
   margin: 0 auto;
-  padding: 0 1rem;
   max-width: 30rem;
+  padding: 0 .5rem;
 }
 
 .album {
+  font-size: 1rem;
+  margin: .5rem 0;
   max-width: 30rem;
 }
 
-.album-artist,
-.album-name,
-.album-type {
-  line-height: 1.5rem;
-}
-
-.album-artist,
-.album-name {
-  font-size: 1rem;
-  display: inline;
-}
-
-.album-name:before {
-  content: "• ";
-}
-
 .album-link {
-  display: block;
   color: inherit;
-  padding: 1rem 0;
+  display: block;
+  margin: 0 -1rem;
+  padding: .5rem 1rem;
 }
 
 .album-link:hover,
@@ -118,33 +108,39 @@ p {
 }
 
 .album-artist {
-  font-weight: inherit;
-  color: #FFF;
+  display: inline;
+  font-weight: 500;
+  margin-right: .2rem;
 }
 
 .album-name {
-  font-weight: inherit;
+  display: inline;
 }
 
 .album-type {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  text-transform: uppercase;
+  color: #71ce0d;
+  font-size: .8rem;
   letter-spacing: 1px;
-  padding-top: 0.5rem;
-  color: #777;
+  line-height: 1.5rem;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.ill-tell-you-what {
+  margin-bottom: 2rem;
+}
+
+.ill-tell-you-what p {
+  font-size: .8rem;
+  margin-bottom: 1rem;
 }
 
 footer {
-  margin: 0 auto;
-  padding-top: 2rem;
-  max-width: 30rem;
-  font-size: 0.8rem;
-  line-height: 1.5rem;
-  color: #999;
-}
-
-footer p {
-  padding: 2rem 0;
   border-top: 1px solid currentColor;
+  color: #101f01;
+  font-size: .8rem;
+  line-height: 1.5rem;
+  margin: 0 auto;
+  max-width: 30rem;
+  padding: 2rem 0;
 }
