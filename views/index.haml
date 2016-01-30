@@ -1,6 +1,6 @@
 - title = capture_haml do
   This week’s new albums
-  = "for&nbsp;#{user.id}" if user
+  = "for&nbsp;#{user.name || user.id}" if user
 
 - @layout_options = { title: title, show_cta: user.nil?, show_what: true }
 

@@ -19,6 +19,7 @@ create table album_artists(
 
 create table users(
   id varchar(50) primary key not null,
+  name text,
   fetched_at integer
 );
 

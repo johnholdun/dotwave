@@ -57,7 +57,7 @@ class Dotwave < Sinatra::Base
 
   def auth_callback
     existing_user = User.find omniauth_user.id
-    omniauth_user.create unless existing_user
+    omniauth_user.send existing_user ? :save : :create
     omniauth_user.save_follows unless existing_user.try(:fetched_recently?)
     redirect "/for/#{omniauth_user.id}"
   end
