@@ -108,13 +108,18 @@ a:hover {
 }
 
 .album-artist {
-  display: inline;
   font-weight: 500;
-  margin-right: .2rem;
 }
 
-.album-name {
-  display: inline;
+@media (min-width: 600px) {
+  .album-artist {
+    display: inline;
+    margin-right: .2rem;
+  }
+
+  .album-name {
+    display: inline;
+  }
 }
 
 .album-type {
