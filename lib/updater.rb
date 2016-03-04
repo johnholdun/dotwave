@@ -78,7 +78,7 @@ class Updater
   def save_album_artists(page = 0, limit = 50)
     result = client::Artist.find @artist_ids[page * limit, limit]
     return unless result.present?
-    @artist_hashes += result.map { |artist| artist.as_json.symbolize_keys }
+    @artist_hashes += result.compact.map { |artist| artist.as_json.symbolize_keys }
     save_album_artists page + 1, limit
   end
 

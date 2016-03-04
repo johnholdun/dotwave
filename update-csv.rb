@@ -17,16 +17,16 @@ updater = Updater.new(RSpotify).tap(&:update!)
 
 puts 'Comparing existing data...'
 
-existing_ids =
-  Hash[
-    [
-      [Album, updater.albums],
-      [Artist, updater.artists]
-    ].map do |klass, records|
-      ids = klass.model.select(:id).where(id: records.map(&:id)).map :id
-      [klass, ids]
-    end
-  ]
+existing_ids = File.read('ids.txt').split("\n")
+  # Hash[
+  #   [
+  #     [Album, updater.albums],
+  #     [Artist, updater.artists]
+  #   ].map do |klass, records|
+  #     ids = [] klass.model.select(:id).where(id: records.map(&:id)).map :id
+  #     [klass, ids]
+  #   end
+  # ]
 
 puts 'Building rows...'
 
@@ -42,7 +42,7 @@ table_classes = {
 }
 
 (updater.artists.all + updater.albums).each do |record|
-  existing = existing_ids[record.class].include? record.id
+  existing = existing_ids.include? record.id
   next if existing
   header = tables[table_classes[record.class]].first
   tables[table_classes[record.class]] << header.map { |k| record.send k }
@@ -51,6 +51,9 @@ table_classes = {
     tables[:album_artists] << [record.id, artist.id]
   end
 end
+
+# No headers please
+tables.values.each(&:shift)
 
 puts 'Writing tables...'
 
