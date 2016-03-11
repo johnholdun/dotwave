@@ -50,6 +50,7 @@ class Album
   def self.popular_recent_query
     model
       .where { release_date > 7.days.ago.to_date.to_s }
+      .exclude(popularity: nil)
       .order(Sequel.desc :popularity)
   end
 

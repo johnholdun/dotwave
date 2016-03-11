@@ -45,3 +45,20 @@ tables = {
     end
   end
 end
+
+puts 'Updating album popularities...'
+
+DB.transaction do
+  albums_by_artist =
+    Hash[
+      DB[:album_artists]
+        .all
+        .group_by { |a| a[:artist_id] }
+        .map { |artist_id, rows| [artist_id, rows.map { |r| r[:album_id] }] }
+    ]
+
+  DB[:artists].each do |artist|
+    album_ids = albums_by_artist[artist[:id]]
+    DB[:albums].where(id: album_ids).update popularity: artist[:popularity]
+  end
+end
