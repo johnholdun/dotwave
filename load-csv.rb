@@ -14,13 +14,16 @@ tables = {
   albums: %i(id name release_date type)
 }
 
-tables.each do |table, columns|
-  records =
+%i(artists album_artists albums).each do |table|
+  columns, *rows =
     File
       .read("#{table}.csv")
       .split("\n")
       .map(&:parse_csv)
-      .map { |r| Hash[columns.zip r] }
+
+  columns.map!(&:to_sym)
+
+  records = rows.map { |r| Hash[columns.zip r] }
 
   existing_id_key = table == :album_artists ? :album_id : :id
 
@@ -30,11 +33,16 @@ tables.each do |table, columns|
       .where(existing_id_key => records.map { |r| r[existing_id_key] })
       .map(existing_id_key)
 
+  puts "Loading #{table}..."
+
   DB.transaction do
     records.each do |record|
-      next if existing_ids.include?(record[existing_id_key])
-      puts "#{table.inspect} #{record.inspect}"
-      DB[table].insert record
+      if existing_ids.include?(record[existing_id_key])
+        next if table == :album_artists
+        DB[table].where(id: record[existing_id_key]).update record
+      else
+        DB[table].insert record
+      end
     end
   end
 end
