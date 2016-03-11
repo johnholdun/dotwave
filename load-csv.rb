@@ -48,6 +48,8 @@ end
 
 puts 'Updating album popularities...'
 
+DB[:artists].where(name: 'Various Artists').update popularity: 0
+
 DB.transaction do
   albums_by_artist =
     Hash[
