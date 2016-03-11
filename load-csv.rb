@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'bundler'
 require 'csv'
-require 'pry'
 
 Bundler.require
 Dotenv.load
