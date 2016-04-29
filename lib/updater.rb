@@ -22,7 +22,7 @@ class Updater
     @albums =
       @albums
       .select { |a| a.release_date >= minimum_timestamp }
-      .sort_by { |a| a.artists.map(&:popularity).max }
+      .sort_by { |a| a.artists.map(&:popularity).max.to_i }
       .reverse
       .uniq(&:identifier)
   end
