@@ -10,21 +10,26 @@ class User
 
   table_name :users
 
-  attr_accessor :client
-
   attr_reader \
     :id,
     :fetched_at,
-    :name
+    :name,
+    :playlist_id,
+    :access_token
 
   def initialize(attributes)
     @id = attributes[:id]
     @fetched_at = attributes[:fetched_at]
     @name = attributes[:name]
+    @playlist_id = attributes[:playlist_id]
+    @access_token = attributes[:access_token]
   end
 
   def save
-    self.class.model.where(id: id).update(name: name)
+    self.class.model.where(id: id).update \
+      name: name,
+      playlist_id: playlist_id,
+      access_token: access_token
   end
 
   def create
@@ -46,7 +51,9 @@ class User
         Album.popular_recent_query.where(id: album_artists.map(:album_id))
   end
 
-  def save_follows
+  def save_follows(force = false)
+    return if fetched_recently? && !force
+
     DB.transaction do
       DB[:follows].filter(user_id: id).delete
 
@@ -63,10 +70,54 @@ class User
   end
 
   def self.from_client(client)
-    new(id: client.id, name: client.display_name).tap { |u| u.client = client }
+    instance = find client.id
+    instance ||= new(id: client.id, name: client.display_name).tap(&:create)
+    instance.tap { |u| u.client = client }
+  end
+
+  def save_album(album_id)
+    # just make sure we've instantiated a client, for credentials. this is debt.
+    client
+    # playlist.remove_tracks! playlist.tracks
+    tracks = RSpotify::Album.new('id' => album_id).tracks
+    tracks.size if playlist.add_tracks! tracks
+  end
+
+  def client=(new_client)
+    self.access_token = new_client.credentials.token
+    save
+    @client = new_client
+  end
+
+  def playlist
+    @playlist ||= RSpotify::Playlist.find(id, playlist_id) if playlist_id
+    return @playlist if @playlist
+    @playlist = client.create_playlist! 'Dotwave: New Releases', public: false
+    self.class.model.where(id: id).update playlist_id: @playlist.id
+    @playlist
   end
 
   private
+
+  attr_writer :access_token
+
+  def client
+    return @client if defined?(@client)
+
+    @client =
+      RSpotify::User.new \
+        'id' => id,
+        'credentials' => {
+          'token' => access_token
+        }
+
+    credentials =
+      (RSpotify::User.class_variable_get(:@@users_credentials) rescue nil) || {}
+    credentials[id] = @client.credentials
+    RSpotify::User.class_variable_set :@@users_credentials, credentials
+
+    @client
+  end
 
   def fetch_follows
     @follows ||= []
@@ -79,6 +130,4 @@ class User
   def update_fetched_at
     self.class.model.where(id: id).update fetched_at: Time.now.to_i
   end
-
-  attr_reader :client
 end

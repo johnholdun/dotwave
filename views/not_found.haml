@@ -1,10 +1,8 @@
-- title = capture_haml do
+- @title = capture_haml do
   - if context == :user
     I don’t know this person.
   - else
     Sorry, what?
-
-- @layout_options = { title: title, show_cta: (context != :user), show_what: true }
 
 .ill-tell-you-what
   - if context == :user

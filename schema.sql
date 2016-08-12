@@ -20,7 +20,9 @@ create table album_artists(
 create table users(
   id varchar(50) primary key not null,
   name text,
-  fetched_at integer
+  fetched_at integer,
+  playlist_id varchar(50),
+  access_token text
 );
 
 create table follows(

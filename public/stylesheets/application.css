@@ -23,41 +23,61 @@ body {
   width: 100%;
 }
 
-a {
+a,
+.inline-link {
+  display: inline;
+  background: none;
+  border: 0;
   color: #71ce0d;
   text-decoration: none;
+  cursor: pointer;
 }
 
 em {
   font-style: italic;
 }
 
-a:hover {
+a:hover,
+.inline-link:hover {
   color: #29ec5a;
 }
 
-.masthead {
-  width: 100%;
-}
-
-.masthead-inner {
+.inner {
+  display: block;
   margin: 0 auto;
   max-width: 30rem;
   padding: 0 .5rem;
-  width: 100%;
 }
 
 .branding {
   font-size: .8rem;
   letter-spacing: 2px;
   line-height: .5rem;
+  padding: 0 0 1rem;
   margin: 0 0 1rem;
   text-transform: uppercase;
+  border-bottom: 1px solid #71ce0d;
 }
 
 .title {
   font-size: 1.2rem;
   line-height: 1.5rem;
+  margin: 1rem 0;
+}
+
+.flash {
+  font-size: 0.7rem;
+  line-height: 1.5rem;
+  padding: 0 0.5rem;
+  background: #FFF;
+  color: #3e7206;
+}
+
+.user {
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.7rem;
+  line-height: 1rem;
+  padding: 0.25rem 0.5rem;
   margin: 1rem 0;
 }
 
@@ -72,34 +92,15 @@ a:hover {
   text-align: center;
 }
 
-.what a {
-  background: #ded;
-  color: #3e7206;
-  display: block;
-  font-size: .8rem;
-  line-height: 2rem;
-  margin-bottom: 1rem;
-  padding: 0 .5rem;
-  text-align: center;
-}
-
-.main {
-  margin: 0 auto;
-  max-width: 30rem;
-  padding: 0 .5rem;
-}
-
 .album {
-  font-size: 1rem;
-  margin: .5rem 0;
-  max-width: 30rem;
+  position: relative;
 }
 
 .album-link {
   color: inherit;
   display: block;
-  margin: 0 -1rem;
-  padding: .5rem 1rem;
+  margin: 0 1rem 0 -1rem;
+  padding: 0 1rem 1rem;
 }
 
 .album-link:hover,
@@ -111,17 +112,6 @@ a:hover {
   font-weight: 500;
 }
 
-@media (min-width: 600px) {
-  .album-artist {
-    display: inline;
-    margin-right: .2rem;
-  }
-
-  .album-name {
-    display: inline;
-  }
-}
-
 .album-type {
   color: #71ce0d;
   font-size: .8rem;
@@ -129,6 +119,25 @@ a:hover {
   line-height: 1.5rem;
   margin: 0;
   text-transform: uppercase;
+}
+
+.add {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.add__button {
+  cursor: pointer;
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  padding-bottom: 1rem;
+  text-align: right;
+  background: none;
+  color: #FFF;
+  border: 0;
+  font-size: 1rem;
 }
 
 .ill-tell-you-what {
@@ -144,8 +153,12 @@ footer {
   border-top: 1px solid currentColor;
   color: #101f01;
   font-size: .8rem;
-  line-height: 1.5rem;
+  line-height: 1rem;
   margin: 0 auto;
-  max-width: 30rem;
-  padding: 2rem 0;
+  padding: 1rem 0;
+}
+
+footer a {
+  color: inherit;
+  border-bottom: 1px solid currentColor;
 }

@@ -7,9 +7,11 @@ Dotenv.load
 require './dotwave'
 
 use \
-  Rack::Session::Cookie,
+  Rack::Session::EncryptedCookie,
   key: 'rack.session',
   path: '/',
-  secret: ENV['COOKIE_SECRET']
+  expire_after: 3600,
+  secret: ENV['COOKIE_SECRET'],
+  httponly: true
 
 run Dotwave
