@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler'
 require 'csv'
+require 'yaml'
 
 Bundler.require
 Dotenv.load
@@ -13,21 +14,18 @@ RSpotify.authenticate ENV['SPOTIFY_CLIENT_ID'], ENV['SPOTIFY_CLIENT_SECRET']
 
 puts 'Fetching data...'
 
-updater = Updater.new(RSpotify).tap(&:update!)
+UPDATER_FILENAME = 'updater.dat'.freeze
 
-# puts 'Comparing existing data...'
-
-# existing_ids = File.read('ids.txt').split("\n")
-# existing_ids =
-#   Hash[
-#     [
-#       [Album, updater.albums],
-#       [Artist, updater.artists]
-#     ].map do |klass, records|
-#       ids = [] klass.model.select(:id).where(id: records.map(&:id)).map :id
-#       [klass, ids]
-#     end
-#   ]
+updater = Marshal.load(File.read(UPDATER_FILENAME)) rescue nil
+updater ||= Updater.new(RSpotify)
+begin
+  updater.update!
+rescue => e
+  puts "\nException! #{e.inspect}\n#{e.backtrace.join("\n")}"
+  puts 'Saving updater to disk...'
+  File.write(UPDATER_FILENAME, Marshal.dump(updater))
+  exit 1
+end
 
 puts 'Building rows...'
 
