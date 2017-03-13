@@ -61,7 +61,7 @@ DB.transaction do
 
   album_artists =
     DB[:album_artists]
-      .where(album_id: new_albums.pluck(:id))
+      .where(album_id: new_albums.select_map(:id))
       .each_with_object({}) { |a, h| (h[a[:album_id]] ||= []) << a[:artist_id] }
 
   artists =
