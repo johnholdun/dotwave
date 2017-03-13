@@ -13,7 +13,11 @@ tables = {
   albums: %i(id name release_date type)
 }
 
+STEP = ARGV.first.to_sym.freeze if ARGV.first
+
 %i(artists album_artists albums).each do |table|
+  next if STEP && table != STEP
+
   columns, *rows =
     File
       .read("#{table}.csv")
@@ -45,6 +49,8 @@ tables = {
     end
   end
 end
+
+exit if STEP && STEP != :popularity
 
 puts 'Updating album popularities...'
 
