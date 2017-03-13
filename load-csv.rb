@@ -57,16 +57,21 @@ puts 'Updating album popularities...'
 DB[:artists].where(name: 'Various Artists').update popularity: 0
 
 DB.transaction do
-  albums_by_artist =
-    Hash[
-      DB[:album_artists]
-        .all
-        .group_by { |a| a[:artist_id] }
-        .map { |artist_id, rows| [artist_id, rows.map { |r| r[:album_id] }] }
-    ]
+  new_albums = DB[:albums].where { release_date > 7.days.ago.to_date.to_s }
 
-  DB[:artists].each do |artist|
-    album_ids = albums_by_artist[artist[:id]]
-    DB[:albums].where(id: album_ids).update popularity: artist[:popularity]
+  album_artists =
+    DB[:album_artists]
+      .where(album_id: new_albums.pluck(:id))
+      .each_with_object({}) { |a, h| (h[a[:album_id]] ||= []) << a[:artist_id] }
+
+  artists =
+    DB[:artists]
+      .where(id: album_artists.values.flatten.uniq)
+      .each_with_object({}) { |a, h| h[a[:id]] = a[:popularity] }
+
+  album_artists.each do |album_id, artist_ids|
+    DB[:albums]
+      .where(id: album_id)
+      .update(popularity: artists.slice(*artist_ids).values.max)
   end
 end
