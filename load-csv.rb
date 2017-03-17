@@ -56,7 +56,7 @@ end
 
 exit if STEP && STEP != :popularity
 
-puts 'Updating album popularities'
+print 'Updating album popularities'
 
 DB[:artists].where(name: 'Various Artists').update popularity: 0
 
