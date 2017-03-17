@@ -18,6 +18,8 @@ STEP = ARGV.first ? ARGV.first.to_sym.freeze : nil
 %i(artists album_artists albums).each do |table|
   next if STEP && table != STEP
 
+  print "Loading #{table}"
+
   columns, *rows =
     File
       .read("#{table}.csv")
@@ -36,7 +38,7 @@ STEP = ARGV.first ? ARGV.first.to_sym.freeze : nil
       .where(existing_id_key => records.map { |r| r[existing_id_key] })
       .map(existing_id_key)
 
-  print "Loading #{table} (#{records.size} records, #{existing_ids.size} existing)"
+  print " (#{records.size} records, #{existing_ids.size} existing)"
 
   DB.transaction do
     records.each do |record|
