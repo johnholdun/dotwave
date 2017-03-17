@@ -13,7 +13,7 @@ tables = {
   albums: %i(id name release_date type)
 }
 
-STEP = ARGV.first.to_sym.freeze if ARGV.first
+STEP = ARGV.first ? ARGV.first.to_sym.freeze : nil
 
 %i(artists album_artists albums).each do |table|
   next if STEP && table != STEP
@@ -36,7 +36,7 @@ STEP = ARGV.first.to_sym.freeze if ARGV.first
       .where(existing_id_key => records.map { |r| r[existing_id_key] })
       .map(existing_id_key)
 
-  puts "Loading #{table}..."
+  print "Loading #{table} (#{records.size} records, #{existing_ids.size} existing)"
 
   DB.transaction do
     records.each do |record|
@@ -46,13 +46,15 @@ STEP = ARGV.first.to_sym.freeze if ARGV.first
       else
         DB[table].insert record
       end
+      print '.'
     end
   end
+  puts
 end
 
 exit if STEP && STEP != :popularity
 
-puts 'Updating album popularities...'
+puts 'Updating album popularities'
 
 DB[:artists].where(name: 'Various Artists').update popularity: 0
 
@@ -73,5 +75,9 @@ DB.transaction do
     DB[:albums]
       .where(id: album_id)
       .update(popularity: artists.slice(*artist_ids).values.max)
+
+    print '.'
   end
+
+  puts
 end
