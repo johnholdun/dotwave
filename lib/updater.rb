@@ -21,11 +21,14 @@ class Updater
     :save_album_artists,
   ].freeze
 
+  TAGGED_QUERY = 'tag:new'.freeze
+  # TAGGED_QUERY = 'year:2016'.freeze
+
   attr_reader \
     :albums,
     :artists
 
-  def initialize(client)
+  def initialize(client, database)
     @client = client
     @album_ids = []
     @album_hashes = []
@@ -50,7 +53,7 @@ class Updater
   def fetch_tagged_album_ids(page = 0, limit = 50)
     result =
       client::Album.search \
-        'tag:new', limit: limit, offset: limit * page, market: 'US'
+        TAGGED_QUERY, limit: limit, offset: limit * page, market: 'US'
     @album_ids += result.map(&:id)
     next_status!(result.present?)
   end
@@ -98,12 +101,7 @@ class Updater
 
     print "--- Starting with #{@albums.size} albums..."
 
-    @albums =
-      @albums
-      .select { |a| a.release_date >= minimum_timestamp }
-      .sort_by { |a| a.artists.map(&:popularity).max.to_i }
-      .reverse
-      .uniq(&:identifier)
+    @albums.select! { |a| a.release_date >= minimum_timestamp }
 
     puts "ending with #{@albums.size} albums"
 

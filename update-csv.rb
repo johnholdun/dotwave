@@ -55,3 +55,5 @@ puts 'Writing tables...'
 tables.each do |name, rows|
   File.write "#{name}.csv", rows.map(&:to_csv).join
 end
+
+FileUtils.rm(UPDATER_FILENAME) if File.exist?(UPDATER_FILENAME)
