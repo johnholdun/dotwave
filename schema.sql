@@ -1,7 +1,8 @@
 create table artists(
   id varchar(50) primary key not null,
   name text,
-  popularity int
+  popularity int,
+  latest_release integer default 0
 );
 
 create table albums(
@@ -28,4 +29,10 @@ create table users(
 create table follows(
   user_id varchar(50) not null,
   artist_id varchar(50) not null
+);
+
+create table updates(
+  date text,
+  step text,
+  page int
 );
