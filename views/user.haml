@@ -22,8 +22,3 @@
       %h1.album-artist= album.artists.map(&:name).join ', '
       %h2.album-name= album.name
       %p.album-type= album.type
-
-    - if current_user.try(:id) == user.id
-      %form.add{ method: 'post', action: '/queue' }
-        %input{ type: 'hidden', name: 'album_id', value: album.id }
-        %button.add__button +
