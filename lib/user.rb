@@ -127,6 +127,38 @@ class User
     fetch_follows
   end
 
+  def lastfm_username
+    'narration'
+  end
+
+  def fetch_artists
+    result = []
+    page = 1
+    loop do
+      url = "http://ws.audioscrobbler.com/2.0/?method=library.getartists&api_key=#{ENV['LASTFM_API_KEY']}&user=#{lastfm_username}&format=json&page=#{page}"
+      data = JSON.parse(open(url).read, symbolize_names: true)
+      result += data[:artists][:artist].map { |a| [a[:name], a[:playcount]] }
+      total_pages = 10 # data[:artists][:'@attr'][:totalPages].to_i
+      page += 1
+      break if page > total_pages
+    end
+    result
+  end
+
+  def fetch_top_yearly_artists
+    result = []
+    page = 1
+    loop do
+      url = "http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&api_key=#{ENV['LASTFM_API_KEY']}&user=#{lastfm_username}&format=json&page=#{page}&period=12month"
+      data = JSON.parse(open(url).read, symbolize_names: true)
+      result += data[:topartists][:artist].map { |a| [a[:name], a[:playcount]] }
+      total_pages = [20, data[:topartists][:'@attr'][:totalPages].to_i].min
+      break if page > total_pages
+      page += 1
+    end
+    result
+  end
+
   def update_fetched_at
     self.class.model.where(id: id).update fetched_at: Time.now.to_i
   end
