@@ -28,7 +28,7 @@ class Updater
     :albums,
     :artists
 
-  def initialize(client, database)
+  def initialize(client)
     @client = client
     @album_ids = []
     @album_hashes = []
