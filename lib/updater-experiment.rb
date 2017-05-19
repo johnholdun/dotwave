@@ -84,7 +84,6 @@ class UpdaterExperiment
       database[:albums]
       .where('name is null and release_date > ?', 7.days.ago.to_date)
       .limit(limit)
-      .offset(limit * page)
       .map(:id)
     result = client::Album.find(album_ids) if album_ids.present?
     if result.present?
@@ -112,12 +111,7 @@ class UpdaterExperiment
             artist_ids.map { |id| [album.id, id] }
       end
     end
-    continue_fetching = result.present?
-    unless continue_fetching
-      missing_albums = database[:albums].where('release_date > ?', 7.days.ago.to_date).where('name is null').count
-      continue_fetching = true if missing_albums > 0
-    end
-    next_status!(continue_fetching)
+    next_status!(result.present?)
   end
 
   def log_albums(_ = nil)
