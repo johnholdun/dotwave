@@ -112,7 +112,7 @@ class UpdaterExperiment
             artist_ids.map { |id| [album.id, id] }
       end
     end
-    continue_fetching = results.present?
+    continue_fetching = result.present?
     unless continue_fetching
       missing_albums = database[:albums].where('release_date > ?', 7.days.ago.to_date).where('name is null').count
       continue_fetching = true if missing_albums > 0
