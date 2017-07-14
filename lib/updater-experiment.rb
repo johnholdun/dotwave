@@ -6,6 +6,7 @@ class UpdaterExperiment
     :fetch_albums,
     :log_albums,
     :save_album_artists,
+    :save_empty_artists,
     :update_popularities,
     :finish
   ].freeze
@@ -48,6 +49,7 @@ class UpdaterExperiment
     end
   rescue RestClient::Exception => e
     puts e.response
+    raise e
   end
 
   def self.call(*args)
@@ -128,6 +130,26 @@ class UpdaterExperiment
     artist_ids =
       database[:artists]
       .where('latest_release > ?', 7.days.ago.to_date.to_time.to_i)
+      .order(:id)
+      .limit(limit)
+      .offset(page * limit)
+      .map(:id)
+
+    result = client::Artist.find(artist_ids) if artist_ids.present?
+    if result
+      result.each do |artist|
+        database[:artists]
+          .where(id: artist.id)
+          .update(name: artist.name, popularity: artist.popularity)
+      end
+    end
+    next_status!(result.present?)
+  end
+
+  def save_empty_artists(page = 0, limit = 50)
+    artist_ids =
+      database[:artists]
+      .where('name is null or name = ? or popularity is null', '')
       .order(:id)
       .limit(limit)
       .offset(page * limit)
