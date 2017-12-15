@@ -76,9 +76,7 @@ class Album
     end
   end
 
-  private
-
-  def previous_friday(date)
+  def self.previous_friday(date)
     friday_offset =
       case date.wday
       when 0
