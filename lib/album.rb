@@ -10,6 +10,7 @@ class Album
     :id,
     :name,
     :release_date,
+    :release_week,
     :artist_ids,
     :artists,
     :type
@@ -18,6 +19,7 @@ class Album
     @id = attributes[:id]
     @name = attributes[:name]
     @release_date = attributes[:release_date]
+    @release_week = attributes[:release_week]
     @type = attributes[:type]
   end
 
@@ -43,13 +45,14 @@ class Album
       name: name,
       popularity: popularity,
       release_date: release_date,
+      release_week: release_week,
       type: type
     }
   end
 
   def self.popular_recent_query
     model
-      .where { release_date > 7.days.ago.to_date.to_s }
+      .where(release_week: previous_friday(Date.current))
       .exclude(popularity: nil)
       .order(Sequel.desc :popularity)
   end
@@ -71,5 +74,29 @@ class Album
       album.save_artists album_artists[album.id], artists
       album
     end
+  end
+
+  private
+
+  def previous_friday(date)
+    friday_offset =
+      case date.wday
+      when 0
+        -2
+      when 1
+        -3
+      when 2
+        -4
+      when 3
+        -5
+      when 4
+        -6
+      when 5
+        0
+      when 6
+        -1
+      end
+
+    date + friday_offset
   end
 end

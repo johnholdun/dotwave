@@ -95,7 +95,8 @@ class UpdaterExperiment
           .update \
             name: album.name,
             type: album.album_type,
-            release_date: album.release_date
+            release_date: album.release_date,
+            release_week: previous_friday(album.release_date)
 
         artist_ids = album.artists.map(&:id)
         existing_ids = database[:artists].where(id: artist_ids).map(:id)
@@ -117,8 +118,8 @@ class UpdaterExperiment
   end
 
   def log_albums(_ = nil)
-    total_albums = database[:albums].where('release_date > ?', 7.days.ago.to_date).count
-    missing_albums = database[:albums].where('release_date > ?', 7.days.ago.to_date).where('name is null').count
+    total_albums = database[:albums].where(release_week: previous_friday(Date.current)).count
+    missing_albums = database[:albums].where(release_week: previous_friday(Date.current)).where('name is null').count
 
     puts "#{total_albums} new albums in the last 7 days"
     puts "#{missing_albums} in the last 7 days with no name yet"
@@ -170,7 +171,7 @@ class UpdaterExperiment
     database[:artists].where(name: 'Various Artists').update popularity: 0
 
     database.transaction do
-      new_albums = database[:albums].where { release_date > 7.days.ago.to_date.to_s }
+      new_albums = database[:albums].where(release_week: previous_friday(Date.current))
 
       album_artists =
         database[:album_artists]
@@ -221,5 +222,27 @@ class UpdaterExperiment
     database[:updates].delete
     return if new_current_status.nil?
     database[:updates].insert(date: Date.current.to_s, step: current_status.first.to_s, page: current_status[1] || 0)
+  end
+
+  def previous_friday(date)
+    friday_offset =
+      case date.wday
+      when 0
+        -2
+      when 1
+        -3
+      when 2
+        -4
+      when 3
+        -5
+      when 4
+        -6
+      when 5
+        0
+      when 6
+        -1
+      end
+
+    date + friday_offset
   end
 end
