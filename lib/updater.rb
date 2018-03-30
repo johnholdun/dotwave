@@ -1,138 +1,130 @@
-require './lib/artist'
-require './lib/album'
-
-# Fetches new releases and their artists from Spotify
 class Updater
-  FETCH_METHODS = [
-    :fetch_tagged_album_ids,
-    :fetch_new_releases_ids,
-    :uniq_albums,
-    :fetch_albums,
-    :save_albums,
-    :save_album_artists,
-    :save_artists,
-    :clean_albums
-  ].freeze
+  QUERY = 'tag:new'.freeze
+  SEARCH_LIMIT = 50
+  NEW_RELEASES_LIMIT = 50
+  FETCH_LIMIT = 50
 
-  PAGINATED_METHODS = [
-    :fetch_tagged_album_ids,
-    :fetch_new_releases_ids,
-    :fetch_albums,
-    :save_album_artists,
-  ].freeze
-
-  TAGGED_QUERY = 'tag:new'.freeze
-  # TAGGED_QUERY = 'year:2016'.freeze
-
-  attr_reader \
-    :albums,
-    :artists
-
-  def initialize(client)
+  def initialize(client, database)
     @client = client
-    @album_ids = []
-    @album_hashes = []
-    @artist_ids = []
-    @artist_hashes = []
-    @current_status = [FETCH_METHODS.first]
+    @database = database
   end
 
-  def update!
-    loop do
-      puts current_status.inspect.gsub(/^\[|\]$/, '')
-      send(*current_status)
-      break unless current_status.present?
-    end
+  def call
+    puts 'Fetch new releases'
+    save_results(:fetch_new_releases, 1, NEW_RELEASES_LIMIT)
+    puts 'Fetch search'
+    save_results(:fetch_search, 1, SEARCH_LIMIT)
+    puts 'Remove bad results'
+    remove_bad_results
+    puts 'Set popularity'
+    set_popularity(1)
+    puts 'Add release weeks'
+    add_release_weeks
+  end
+
+  def self.call(*args)
+    new(*args).call
   end
 
   private
 
-  attr_reader :client
-  attr_accessor :current_status
+  attr_reader :client, :database
 
-  def fetch_tagged_album_ids(page = 0, limit = 50)
-    result =
-      client::Album.search \
-        TAGGED_QUERY, limit: limit, offset: limit * page, market: 'US'
-    @album_ids += result.map(&:id)
-    next_status!(result.present?)
+  def offset_from_page(page, limit)
+    (page - 1) * limit
   end
 
-  def fetch_new_releases_ids(page = 0, limit = 50)
-    result = client::Album.new_releases limit: limit, offset: (limit * page)
-    @album_ids += result.map(&:id)
-    next_status!(result.present?)
+  def fetch_search(page)
+    client::Album.search \
+      QUERY,
+      limit: SEARCH_LIMIT,
+      offset: offset_from_page(page, SEARCH_LIMIT)
   end
 
-  def uniq_albums
-    @album_ids.uniq!
-    next_status!
+  def fetch_new_releases(page)
+    client::Album.new_releases \
+      limit: NEW_RELEASES_LIMIT,
+      offset: offset_from_page(page, NEW_RELEASES_LIMIT)
   end
 
-  def fetch_albums(page = 0, limit = 20)
-    result = client::Album.find @album_ids[page * limit, limit]
-    @album_hashes += result.map { |album| album_hash(album) } if result
-    next_status!(result.present?)
-  end
+  def save_results(method_name, page, limit)
+    result = send(method_name, page)
+    existing_ids = database[:albums].where(id: result.map(&:id)).map(:id)
+    new_results = result.reject { |r| existing_ids.include?(r.id) }
 
-  def save_albums
-    @album_artist_ids =
-      Hash[@album_hashes.map { |a| [a[:id], a.delete(:artist_ids)] }]
-    @albums = Collection.from_array(Album, @album_hashes).all
-    @artist_ids = @album_artist_ids.values.flatten.uniq
-    next_status!
-  end
-
-  def save_album_artists(page = 0, limit = 50)
-    result = client::Artist.find @artist_ids[page * limit, limit]
-    @artist_hashes +=
-      (result || []).compact.map { |artist| artist.as_json.symbolize_keys }
-    next_status!(result.present?)
-  end
-
-  def save_artists
-    @artists = Collection.from_array(Artist, @artist_hashes)
-    @albums.each { |a| a.save_artists @album_artist_ids[a.id], artists }
-    next_status!
-  end
-
-  def clean_albums
-    minimum_timestamp = 7.days.ago.to_date.to_s
-
-    print "--- Starting with #{@albums.size} albums..."
-
-    @albums.select! { |a| a.release_date >= minimum_timestamp }
-
-    puts "ending with #{@albums.size} albums"
-
-    next_status!
-  end
-
-  def album_hash(album)
-    album
-      .as_json
-      .symbolize_keys
-      .merge \
+    new_results.each do |album|
+      params = {
+        id: album.id,
+        title: album.name,
         type: album.album_type,
-        artist_ids: album.artists.map(&:id)
-  end
+        release_date: album.release_date,
+        artists: album.artists.map(&:name).join(', ')[0, 100],
+        artist_id: album.artists.map(&:id).first,
+        popularity: album.popularity.to_i,
+        image_url: album.images.first['url']
+      }
 
-  def next_status!(paginated = false)
-    if paginated && PAGINATED_METHODS.include?(current_status[0])
-      new_current_status = current_status
-      new_current_status[1] ||= 0
-      new_current_status[1] += 1
-      self.current_status = new_current_status
-      return
+      database[:albums].insert(params)
     end
 
-    current_index = FETCH_METHODS.index(current_status.first)
-    next_method = FETCH_METHODS[current_index + 1]
-    self.current_status = if next_method
-      [next_method]
-    else
-      # Being very explicit here because we want to clear out the status
-      nil
+    if result.size == limit
+      save_results(method_name, page + 1, limit)
+    end
+  end
+
+  def remove_bad_results
+    two_weeks_ago = Friday.for(Date.today) - 14
+    database[:albums]
+      .where(
+        Sequel.lit(
+          'release_date < ? or release_date not like ?',
+          two_weeks_ago,
+          '____-__-__'
+        )
+      )
+      .delete
+  end
+
+  def set_popularity(page)
+    albums =
+      database[:albums]
+      .where(popularity: 0)
+      .limit(FETCH_LIMIT)
+      .offset(offset_from_page(page, FETCH_LIMIT))
+
+    return if albums.count == 0
+
+    artist_ids = albums.map { |a| a[:artist_id] }.uniq
+
+    result = client::Artist.find(artist_ids)
+    popularities = result.each_with_object({}) { |a, h| h[a.id] = a.popularity }
+
+    albums.each do |album|
+      database[:albums]
+        .where(id: album[:id])
+        .update(popularity: popularities[album[:artist_id]])
+    end
+
+    if result.size == FETCH_LIMIT
+      set_popularity(page + 1)
+    end
+  end
+
+  def add_release_weeks
+    this_week = Friday.for(Date.today)
+
+    [0, 7, 14].each do |offset|
+      week = this_week - offset
+
+      database[:albums]
+        .where(
+          Sequel.lit(
+            'release_week is null and release_date > ? and release_date <= ?',
+            week - 7,
+            week
+          )
+        )
+        .update(release_week: week)
     end
   end
 end

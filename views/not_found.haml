@@ -1,24 +1,14 @@
-- @title = capture_haml do
-  - if context == :user
-    I don’t know this person.
-  - else
-    Sorry, what?
+- @exclude_settings = true
+
+%h1.title Page not found
 
 .ill-tell-you-what
-  - if context == :user
-    %p
-      This isn’t a username I recognize. Is it you? Let’s get acquainted!
+  %p
+    This is probably my bad, but I just have no idea where you were trying to
+    go. Were you looking for a profile? I got rid of those in favor of just new
+    releases for everybody. Hope you don’t mind.
 
-    %p.cta
-      %a{ href: '/auth/spotify' }
-        Sign in with&nbsp;Spotify
-
-  - else
-    %p
-      This is probably my bad, but I just have no idea where you were trying to
-      go.
-
-    %p
-      If this seems like a goof, would you mind letting me know? I’m
-      <a href="http://twitter.com/johnholdun">@johnholdun</a>,
-      in case you missed that before.
+  %p
+    If this seems like a goof, or you just want to talk, let’s talk! I’m
+    <a class="inline" href="https://twitter.com/johnholdun">@johnholdun</a>,
+    in case you missed that before.

@@ -17,19 +17,24 @@ html {
 }
 
 body {
-  background: #3e7206;
-  color: #ded;
-  margin: 1rem auto;
+  background: #fff;
+  color: #333;
+  margin: 0 auto 1rem;
   width: 100%;
 }
 
-a,
-.inline-link {
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.inline {
   display: inline;
   background: none;
   border: 0;
-  color: #71ce0d;
+  color: inherit;
   text-decoration: none;
+  border-bottom: 1px solid currentColor;
   cursor: pointer;
 }
 
@@ -37,26 +42,48 @@ em {
   font-style: italic;
 }
 
-a:hover,
-.inline-link:hover {
-  color: #29ec5a;
+a.inline:hover {
+  color: #999;
 }
 
 .inner {
+  position: relative;
   display: block;
   margin: 0 auto;
-  max-width: 30rem;
+  width: 100%;
+  max-width: 1280px;
   padding: 0 .5rem;
+}
+
+header {
+  /* http://colorzilla.com/gradient-editor/#3dd6f4+0,aef9e7+51,f4a8ff+100 */
+  background: linear-gradient(150deg, rgb(61, 214, 244) 0%, rgb(174, 249, 231) 51%, rgb(244, 168, 255) 100%);
+  padding: 1rem;
+  margin: 0 0 1rem;
+}
+
+header:after {
+  content: " ";
+  position: absolute;
+  z-index: 0;
+  background: rgba(255, 255, 255, 0.8);
+  top: 2.5rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .branding {
   font-size: .8rem;
   letter-spacing: 2px;
   line-height: .5rem;
-  padding: 0 0 1rem;
-  margin: 0 0 1rem;
   text-transform: uppercase;
-  border-bottom: 1px solid #71ce0d;
+}
+
+.branding a,
+.branding a:hover {
+  color: inherit;
+  border: none;
 }
 
 .title {
@@ -65,58 +92,107 @@ a:hover,
   margin: 1rem 0;
 }
 
-.flash {
-  font-size: 0.7rem;
+.settings-control {
+  position: absolute;
+  display: block;
+  right: 1rem;
+  top: -.5rem;
+  padding: 0 0.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  font-size: .6rem;
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid currentColor;
+  border-radius: .1rem;
+}
+
+.load-more {
+  display: block;
+  width: auto;
+  margin: 2rem auto;
+  background: none;
+  font: inherit;
   line-height: 1.5rem;
   padding: 0 0.5rem;
-  background: #FFF;
-  color: #3e7206;
+  font-size: .6rem;
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid currentColor;
+  border-radius: .1rem;
 }
 
-.user {
-  background: rgba(255, 255, 255, 0.1);
-  font-size: 0.7rem;
-  line-height: 1rem;
-  padding: 0.25rem 0.5rem;
-  margin: 1rem 0;
+.settings-control::-webkit-details-marker {
+  display: none;
 }
 
-.cta a {
-  background: #71ce0d;
-  color: #3e7206;
+.settings-body {
   display: block;
-  font-size: .8rem;
-  line-height: 2rem;
-  margin-bottom: 1rem;
-  padding: 0 .5rem;
-  text-align: center;
+  position: relative;
+  z-index: 2;
+  padding: 1rem;
+  color: #333;
+  margin: 1rem -1rem -1rem;
+}
+
+.albums {
+  padding: 0 .5rem 1rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: space-between;
+  align-items: flex-start;
 }
 
 .album {
   position: relative;
+  max-width: 300px;
+  flex: 0 0 300px;
+  padding: 0 .5rem;
+  margin-bottom: 1rem;
 }
 
 .album-link {
-  color: inherit;
   display: block;
   margin: 0 -1rem;
   padding: 0 1rem 1rem;
 }
 
-.album-link:hover,
-.album-link:active {
-  color: inherit;
+.album-image {
+  margin-bottom: .5rem;
+}
+
+.album-image img {
+  display: block;
+  width: 640px;
+  max-width: 100%;
+  height: auto;
+}
+
+.album-artist,
+.album-title {
+  font-size: .8rem;
+  width: 100%;
+  height: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .album-artist {
-  font-weight: 500;
+  color: #000;
+}
+
+.album-title {
+  color: #777;
 }
 
 .album-type {
-  color: #71ce0d;
-  font-size: .8rem;
-  letter-spacing: 1px;
-  line-height: 1.5rem;
+  color: #999;
+  font-size: .5rem;
+  letter-spacing: 2px;
+  line-height: 1rem;
   margin: 0;
   text-transform: uppercase;
 }

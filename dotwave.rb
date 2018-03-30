@@ -1,130 +1,89 @@
-require 'rspotify/oauth'
-require 'securerandom'
+DB = Sequel.connect(ENV['DATABASE_URL'])
 
-DB = Sequel.connect ENV['DATABASE_URL']
+Dir.glob('lib/*.rb').map { |f| require_relative(f) }
 
-Dir.glob('lib/*.rb').map { |f| require_relative f }
-
-SPOTIFY_CLIENT_ID = ENV['SPOTIFY_CLIENT_ID']
-SPOTIFY_CLIENT_SECRET = ENV['SPOTIFY_CLIENT_SECRET']
-SPOTIFY_SCOPES = %w(user-follow-read playlist-modify-private)
-
-RSpotify.authenticate \
-  SPOTIFY_CLIENT_ID,
-  SPOTIFY_CLIENT_SECRET
-
-# Dotwave: personalized new releases on Spotify
+# Dotwave: New releases from Spotify
 class Dotwave < Sinatra::Base
-  use \
-    OmniAuth::Strategies::Spotify,
-    SPOTIFY_CLIENT_ID,
-    SPOTIFY_CLIENT_SECRET,
-    scope: SPOTIFY_SCOPES.join(' ')
-
-  set :root, File.dirname(__FILE__)
-  set :views, 'views'
-  layout :layout
+  set(:root, File.dirname(__FILE__))
+  set(:views, 'views')
+  layout(:layout)
 
   before do
-    redirect request.path[0, -2] if request.path =~ %r{./$}
+    redirect(request.path[0, -2]) if request.path =~ %r{./$}
   end
 
-  get('/') { index }
-  get('/about') { about }
-  get('/for/:user_id') { |user_id| show_user user_id }
-  get('/auth/spotify/callback') { auth_callback }
-  post('/sign-out') { sign_out }
-  post('/queue') { queue_album }
-  get('*') { not_found }
-
-  def index
-    redirect "/for/#{current_user.id}" if current_user
-    haml :index
+  get('/') do
+    haml(:index)
   end
 
-  def about
-    redirect '/'
-  end
+  TIMEFRAME_OFFSETS =
+    {
+      'this-week' => 0,
+      'last-week' => 7,
+      'two-weeks-ago' => 14
+    }.freeze
 
-  def show_user(user_id)
-    user = User.find user_id
-    return not_found(:user) unless user
+  DEFAULT_LIMIT = 20
+  MAX_LIMIT = 100
 
-    haml :user, locals: {
-      user: user,
-      albums: user.recommendations
-    }
-  end
+  get('/api/albums') do
+    filter = params[:filter] || {}
+    timeframe = filter[:timeframe]
 
-  def auth_callback
-    generate_session_key omniauth_user
-    omniauth_user.save_follows
-    set_flash 'Nice to see you!'
-    redirect "/for/#{omniauth_user.id}"
-  end
-
-  def sign_out
-    session[:session_key] = nil
-    set_flash 'See you later!'
-    redirect '/'
-  end
-
-  def queue_album
-    album_id = params[:album_id]
-    return 401 unless current_user.present?
-    return 400 unless album_id.present?
-    result = current_user.save_album album_id
-    if result.to_i > 0
-      set_flash "Added #{result} track#{'s' unless result == 1} to your queue"
-    else
-      set_flash 'There was a problem adding this album to your queue :('
+    if timeframe.nil?
+      timeframe = TIMEFRAME_OFFSETS.keys.first
+    elsif !TIMEFRAME_OFFSETS.key?(timeframe)
+      content_type(:json)
+      status(400)
+      data = {
+        errors: [
+          "Bad timeframe #{timeframe}. Must be one of #{TIMEFRAME_OFFSETS.keys.join(', ')}"
+        ]
+      }
+      return data.to_json
     end
-    redirect "/for/#{current_user.id}"
-  end
 
-  def not_found(context = :page)
-    status 404
-    haml :not_found, locals: {
-      context: context
+    release_week =
+      Friday.for(Date.today) - TIMEFRAME_OFFSETS[timeframe]
+
+    page_params = params[:page] || {}
+    offset = page_params[:offset].to_i
+    limit = page_params[:limit].to_i
+    limit = DEFAULT_LIMIT if limit == 0
+    limit = [limit, MAX_LIMIT].min
+
+    albums =
+      DB[:albums]
+      .limit(limit)
+      .offset(offset)
+      .order(Sequel.desc(:popularity))
+      .where(Sequel.lit('popularity is not null'))
+      .where(Sequel.lit('popularity > 0'))
+      .where(release_week: release_week)
+
+    content_type(:json)
+
+    response = {
+      data: albums.map do |album|
+        {
+          type: 'albums',
+          id: album[:id],
+          title: album[:title],
+          releaseWeek: album[:release_week],
+          artists: album[:artists],
+          popularity: album[:popularity],
+          releaseDate: album[:release_date],
+          subType: album[:type],
+          image: album[:image_url]
+        }
+      end
     }
+
+    response.to_json
   end
 
-  private
-
-  def flash
-    (@flash ||= session['x-flash']).tap do
-      session.delete 'x-flash'
-    end
-  end
-
-  def set_flash(new_flash)
-    session['x-flash'] = new_flash
-  end
-
-  def omniauth_user
-    @omniauth_user ||=
-      User.from_client RSpotify::User.new request.env['omniauth.auth']
-  end
-
-  def current_user
-    return @current_user if defined?(@current_user)
-    return unless session[:session_key]
-    record = User.model.where(session_key: session[:session_key]).first
-    return unless record
-    @current_user = User.new record
-  end
-
-  def generate_session_key(user)
-    return unless user && user.id
-    session_key = find_session_key
-    User.model.where(id: user.id).update session_key: session_key
-    @current_user = user
-    session[:session_key] = session_key
-  end
-
-  def find_session_key
-    key = SecureRandom.hex 32
-    return key unless User.model.where(session_key: key).present?
-    find_session_key
+  get('*') do
+    status(404)
+    haml :not_found
   end
 end
