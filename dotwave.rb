@@ -4,17 +4,7 @@ Dir.glob('lib/*.rb').map { |f| require_relative(f) }
 
 # Dotwave: New releases from Spotify
 class Dotwave < Sinatra::Base
-  set(:root, File.dirname(__FILE__))
   set(:views, 'views')
-  layout(:layout)
-
-  before do
-    redirect(request.path[0, -2]) if request.path =~ %r{./$}
-  end
-
-  get('/') do
-    haml(:index)
-  end
 
   TIMEFRAME_OFFSETS =
     {
@@ -82,8 +72,12 @@ class Dotwave < Sinatra::Base
     response.to_json
   end
 
+  get('/') do
+    haml(:layout)
+  end
+
   get('*') do
     status(404)
-    haml :not_found
+    haml(:layout)
   end
 end
