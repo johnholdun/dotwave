@@ -10,8 +10,11 @@ create table albums(
   name text,
   type text,
   release_date varchar(10),
+  release_week varchar(10),
   popularity int
 );
+
+create index index_release_week on albums(release_week);
 
 create table album_artists(
   album_id varchar(50) not null,
