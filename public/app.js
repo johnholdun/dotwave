@@ -221,9 +221,9 @@ addEventListener('load', () => {
         <h1 class="title">About</h1>
         <p>
           Dotwave is a comprehensive list of new music releases every week. It’s a love
-          letter to the now-defunct Rdio created by
+          letter to the late Rdio written by
           <a class="inline" href="http://twitter.com/johnholdun">
-            John Holdun</a>
+            John Holdun</a>,
           and its source is on
           <a class="inline" href="https://github.com/johnholdun/dotwave">
             GitHub</a>
