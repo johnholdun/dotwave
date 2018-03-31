@@ -28,7 +28,8 @@ a {
   text-decoration: none;
 }
 
-a.inline {
+a.inline,
+button.inline-link {
   display: inline;
   background: none;
   border: 0;
@@ -36,6 +37,51 @@ a.inline {
   text-decoration: none;
   border-bottom: 1px solid currentColor;
   cursor: pointer;
+}
+
+label {
+  color: #777;
+  font-size: .5rem;
+  line-height: .5rem;
+}
+
+select {
+  font: inherit;
+  width: 100%;
+  min-width: 0;
+  background: none;
+  display: inline-block;
+  -webkit-appearance: none;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.baby {
+  width: 320px;
+  margin: 0 auto 2rem;
+}
+
+.baby p {
+  font-size: .8rem;
+  margin-bottom: 1rem;
+}
+
+.input-wrapper {
+  margin-bottom: 2rem;
+}
+
+.btn {
+  cursor: pointer;
+  display: inline-block;
+  background: none;
+  border: 1px solid currentColor;
+  text-transform: uppercase;
+  font-size: .5rem;
+  letter-spacing: .05rem;
+  padding: .125rem .5rem;
+  border-radius: .25rem;
 }
 
 em {
@@ -58,24 +104,15 @@ a.inline:hover {
 header {
   /* http://colorzilla.com/gradient-editor/#3dd6f4+0,aef9e7+51,f4a8ff+100 */
   background: linear-gradient(150deg, rgb(61, 214, 244) 0%, rgb(174, 249, 231) 51%, rgb(244, 168, 255) 100%);
-  padding: 1rem;
+  padding: 1rem 0;
   margin: 0 0 1rem;
 }
 
-header:after {
-  content: " ";
-  position: absolute;
-  z-index: 0;
-  background: rgba(255, 255, 255, 0.8);
-  top: 2.5rem;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
 .branding {
+  text-align: center;
   font-size: .8rem;
-  letter-spacing: 2px;
+  color: #fff;
+  letter-spacing: 10px;
   line-height: .5rem;
   text-transform: uppercase;
 }
@@ -86,25 +123,19 @@ header:after {
   border: none;
 }
 
+.status {
+  text-align: center;
+  background: #eee;
+  padding: 0.5rem 0;
+  margin: -1rem 0 1rem;
+  font-size: .6rem;
+  line-height: 1rem;
+}
+
 .title {
   font-size: 1.2rem;
   line-height: 1.5rem;
   margin: 1rem 0;
-}
-
-.settings-control {
-  position: absolute;
-  display: block;
-  right: 1rem;
-  top: -.5rem;
-  padding: 0 0.5rem;
-  height: 1.5rem;
-  line-height: 1.5rem;
-  font-size: .6rem;
-  list-style: none;
-  cursor: pointer;
-  border: 1px solid currentColor;
-  border-radius: .1rem;
 }
 
 .load-more {
@@ -120,19 +151,6 @@ header:after {
   cursor: pointer;
   border: 1px solid currentColor;
   border-radius: .1rem;
-}
-
-.settings-control::-webkit-details-marker {
-  display: none;
-}
-
-.settings-body {
-  display: block;
-  position: relative;
-  z-index: 2;
-  padding: 1rem;
-  color: #333;
-  margin: 1rem -1rem -1rem;
 }
 
 .albums {
@@ -172,9 +190,10 @@ header:after {
 
 .album-artist,
 .album-title {
-  font-size: .8rem;
+  font-size: .75rem;
   width: 100%;
   height: 1rem;
+  line-height: 1rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -195,15 +214,6 @@ header:after {
   line-height: 1rem;
   margin: 0;
   text-transform: uppercase;
-}
-
-.ill-tell-you-what {
-  margin-bottom: 2rem;
-}
-
-.ill-tell-you-what p {
-  font-size: .8rem;
-  margin-bottom: 1rem;
 }
 
 footer {
