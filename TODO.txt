@@ -1,2 +1,3 @@
 make updater fault-tolerant
 figure out how to get updater to run on cron job
+support settings without localStorage
