@@ -44,12 +44,17 @@ class Dotwave < Sinatra::Base
 
     albums =
       DB[:albums]
-      .limit(limit)
-      .offset(offset)
       .order(Sequel.desc(:popularity))
       .where(Sequel.lit('popularity is not null'))
       .where(Sequel.lit('popularity > 0'))
       .where(release_week: release_week)
+
+    if %w(album single).include?(filter[:subType])
+      albums = albums.where(type: filter[:subType])
+    end
+
+    # Pagination after all filters are applied, *just* in case
+    albums = albums.limit(limit).offset(offset)
 
     content_type(:json)
 
