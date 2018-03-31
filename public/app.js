@@ -368,4 +368,6 @@ addEventListener('load', () => {
   }
 
   route(location.pathname)
+
+  addEventListener('popstate', () => { route(location.pathname) })
 })
