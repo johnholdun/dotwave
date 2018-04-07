@@ -62,8 +62,11 @@ class Updater
         .reject { |r| existing_ids.include?(r.id) }
         .reject do |release|
           release.release_date !~ /^\d{4}-\d{2}-\d{2}$/ ||
-          release.release_date < two_weeks_ago.to_s
+          release.release_date < two_weeks_ago.to_s ||
+          release.release_date > Date.today.to_s
         end
+
+    popularity_modifier = method_name == :fetch_new_releases ? 2 * 1
 
     albums =
       new_results.map do |album|
@@ -78,7 +81,7 @@ class Updater
           release_week: release_week,
           artists: album.artists.map(&:name).join(', ')[0, 100],
           artist_id: album.artists.to_a.map(&:id).first,
-          popularity: album.popularity.to_i,
+          popularity: album.popularity.to_i * popularity_modifier,
           image_url: album.images.try(:first).try(:[], 'url').to_s
         }
       end
