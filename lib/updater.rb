@@ -66,8 +66,6 @@ class Updater
           release.release_date > Date.today.to_s
         end
 
-    popularity_modifier = method_name == :fetch_new_releases ? 2 : 1
-
     albums =
       new_results.map do |album|
         release_date = Date.new(*album.release_date.split('-').map(&:to_i))
@@ -81,13 +79,12 @@ class Updater
           release_week: release_week,
           artists: album.artists.map(&:name).join(', ')[0, 100],
           artist_id: album.artists.to_a.map(&:id).first,
-          popularity: album.popularity.to_i * popularity_modifier,
+          popularity: 0,
           image_url: album.images.try(:first).try(:[], 'url').to_s
         }
       end
 
-    artist_ids =
-      albums.select { |a| a[:popularity] == 0 }.map { |a| a[:artist_id] }.uniq
+    artist_ids = albums.map { |a| a[:artist_id] }.uniq
 
     log(:info, "Fetch #{artist_ids.size} artists")
 
@@ -106,9 +103,7 @@ class Updater
     popularities =
       artists.each_with_object({}) { |a, h| h[a.id] = a.popularity }
 
-    albums
-      .select { |a| a[:popularity] == 0 }
-      .each { |a| a[:popularity] = popularities[a[:artist_id]].to_i }
+    albums.each { |a| a[:popularity] = popularities[a[:artist_id]].to_i }
 
     albums.each { |a| database[:albums].insert(a) }
 
