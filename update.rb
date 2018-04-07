@@ -13,9 +13,4 @@ puts 'Fetching data...'
 
 RSpotify.authenticate(ENV['SPOTIFY_CLIENT_ID'], ENV['SPOTIFY_CLIENT_SECRET'])
 
-begin
-  Updater.call(RSpotify, DB)
-rescue => e
-  puts e.message
-  binding.pry
-end
+Updater.call(RSpotify, DB)
