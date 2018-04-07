@@ -156,7 +156,6 @@ addEventListener('load', () => {
               <a
                 class="album-link"
                 href="https://song.link/redirect?url=${encodeURIComponent(`https://open.spotify.com/album/${album.id}`)}&to=${service}"
-                target="_blank"
                 title="Open in ${LABELS.service[service]}"
               >
                 <figure class="album-image">
