@@ -230,11 +230,11 @@ addEventListener('load', () => {
         </p>
         <p>
           Release data comes from
-          <a href="https://developer.spotify.com/web-api/">
+          <a class="inline" href="https://developer.spotify.com/web-api/">
             the Spotify API</a>;
           streaming service links are powered by
           the incomparable
-          <a href="https://song.link/">
+          <a class="inline" href="https://song.link/">
             Songlink</a>.
         </p>
       </div>
