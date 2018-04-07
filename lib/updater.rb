@@ -10,9 +10,11 @@ class Updater
   end
 
   def call
+    log(:info, 'Beginning to fetch!')
     save_results(:fetch_new_releases, 1, NEW_RELEASES_LIMIT)
     save_results(:fetch_search, 1, SEARCH_LIMIT)
     remove_old_albums
+    log(:info, 'Complete!')
   end
 
   def self.call(*args)
@@ -75,9 +77,9 @@ class Updater
           release_date: album.release_date,
           release_week: release_week,
           artists: album.artists.map(&:name).join(', ')[0, 100],
-          artist_id: album.artists.map(&:id).first,
+          artist_id: album.artists.to_a.map(&:id).first,
           popularity: album.popularity.to_i,
-          image_url: album.images.first['url']
+          image_url: album.images.try(:first).try(:[], 'url').to_s
         }
       end
 
