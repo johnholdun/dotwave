@@ -1,3 +1,8 @@
-make updater fault-tolerant
-figure out how to get updater to run on cron job
-support settings without localStorage
+use babel or webpack or whatever for better browser support
+support settings without localStorage (query strings?)
+support non-square cover art (?)
+disable load button while loading
+infinite scroll (auto "load more" when < X screens from bottom)
+tweak cover widths on small screens (media queries)
+de-dupe explicit/edited albums
+reject new recordings credited to classical composers?
