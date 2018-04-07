@@ -66,7 +66,7 @@ class Updater
           release.release_date > Date.today.to_s
         end
 
-    popularity_modifier = method_name == :fetch_new_releases ? 2 * 1
+    popularity_modifier = method_name == :fetch_new_releases ? 2 : 1
 
     albums =
       new_results.map do |album|
