@@ -69,6 +69,9 @@ class Updater
     albums =
       new_results.map do |album|
         release_date = Date.new(*album.release_date.split('-').map(&:to_i))
+        # If this album was released during the week, push it to the following
+        # Friday. If it was released *on* Friday, then leave it where it is.
+        release_date += 6
         release_week = Friday.for(release_date)
 
         {
